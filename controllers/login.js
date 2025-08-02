@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 
 const login = async (req, res) => {
   const { username, password } = req.body;
-
+  console.log(req.body);
   if (!username || !password) {
     return res.json({
       success: false,
@@ -28,18 +28,18 @@ const login = async (req, res) => {
       });
     }
 
-    const token = jwt.sign(
-      { id: result.rows[0].id, role: result.rows[0].role },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES }
-    );
+    const token = jwt.sign({ id: result.rows[0].id }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES,
+    });
 
     const cookieOptions = {
+      expires: new Date(
+        Date.now() + process.env.COOKIE_EXPIRES * 24 * 60 * 60 * 1000
+      ),
       httpOnly: true,
       secure: true,
       sameSite: "None",
-      path: "/", // важно
-      expires: new Date(Date.now() + process.env.COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
+      // domain: ".zadanie.com",
     };
 
     res.cookie("userRegistered", token, cookieOptions);
