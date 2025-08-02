@@ -185,4 +185,37 @@ router.get(
   }
 );
 
+router.get(
+  "/admin/regions",
+  checkUserCookie,
+  checkAdminRole,
+  async (req, res) => {
+    try {
+      const dbS = dbService.getDbServiceInstance();
+      const regions = await dbS.getAllRegions();
+      res.json({ success: true, data: regions });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  }
+);
+
+router.get(
+  "/admin/sections",
+  checkUserCookie,
+  checkAdminRole,
+  async (req, res) => {
+    try {
+      const dbS = dbService.getDbServiceInstance();
+      const sections = await dbS.getAllSections();
+      res.json({ success: true, data: sections });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  }
+);
+
+
 module.exports = router;

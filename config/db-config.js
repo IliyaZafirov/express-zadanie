@@ -114,6 +114,16 @@ class dbService {
     }
   }
 
+  async getAllRegions() {
+    try {
+      const result = await queryUtil(`SELECT id, name FROM regions`);
+      return result.rows;
+    } catch (err) {
+      console.log(err);
+      return [];
+    }
+  }
+
   async createSection(name, parent_id) {
     try {
       await queryUtil(
@@ -124,6 +134,15 @@ class dbService {
     } catch (err) {
       console.log(err);
       return false;
+    }
+  }
+
+  async getAllSections() {
+    try {
+      const result = await queryUtil(`SELECT id, name FROM sections`);
+      return result.rows;
+    } catch (err) {
+      return [];
     }
   }
 
