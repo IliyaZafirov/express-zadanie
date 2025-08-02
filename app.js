@@ -21,8 +21,8 @@ app.use(helmet.noSniff());
 // CORS middleware
 app.use(
   cors({
-    //origin: "https://next-zadanie.vercel.app",
-    origin: "http://localhost:3000",
+    origin: "https://next-zadanie.vercel.app",
+   // origin: "http://localhost:3000",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: [
