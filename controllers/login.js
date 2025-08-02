@@ -28,9 +28,11 @@ const login = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ id: result.rows[0].id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES,
-    });
+    const token = jwt.sign(
+      { id: result.rows[0].id, role: result.rows[0].role },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES }
+    );
 
     const cookieOptions = {
       expires: new Date(
