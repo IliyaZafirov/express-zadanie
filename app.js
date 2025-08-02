@@ -9,44 +9,28 @@ const PORT = process.env.PORT;
 const loggedIn = require("./controllers/loggedIn");
 const helmet = require("helmet");
 
-app.set("trust proxy", true);
+app.set("trust proxy", 1); // важно за secure cookies през proxy
 
-// Middleware
 const cookie = require("cookie-parser");
 app.use(cookie());
+
 const cors = require("cors");
-
-app.use(helmet.frameguard({ action: "deny" }));
-app.use(helmet.noSniff());
-
-// CORS middleware
 app.use(
   cors({
     origin: "https://next-zadanie.vercel.app",
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "X-CSRF-Token",
-      "X-Requested-With",
-      "Accept",
-      "Accept-Version",
-      "Content-Length",
-      "Content-MD5",
-      "Date",
-      "X-Api-Version",
-    ],
   })
 );
-// Body parsers
+
+app.use(helmet.frameguard({ action: "deny" }));
+app.use(helmet.noSniff());
+
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // Routes
-//app.all("*", loggedIn); // ??????????????????
 app.use("/", require("./controllers/pages"));
-app.use("/auth", require("./controllers/auth"));
+app.use("/auth", require("./controllers/auth")); // без loggedIn тук
 
 client.connect((err) => {
   if (err) {
