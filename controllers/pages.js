@@ -216,5 +216,9 @@ router.get(
   }
 );
 
+// for cookie check (to prevent xss attacks)
+router.get("/auth/check", checkUserCookie, (req, res) => {
+  res.json({ loggedIn: true, user: req.user });
+});
 
 module.exports = router;
