@@ -9,7 +9,7 @@ const PORT = process.env.PORT;
 const loggedIn = require("./controllers/loggedIn");
 const helmet = require("helmet");
 
-app.set("trust proxy", true); //
+app.set("trust proxy", true);
 
 // Middleware
 const cookie = require("cookie-parser");
@@ -22,23 +22,9 @@ app.use(helmet.noSniff());
 // CORS middleware
 app.use(
   cors({
-    origin: (origin, callback) => {
-      const allowedOrigins = [
-        "https://next-zadanie.vercel.app",
-        // "http://localhost:3000",
-      ];
-
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.error(`CORS blocked for origin: ${origin}`);
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    origin: "https://next-zadanie.vercel.app",
     credentials: true,
-    //secure: true,
-
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
       "Authorization",
@@ -48,13 +34,11 @@ app.use(
       "Accept-Version",
       "Content-Length",
       "Content-MD5",
-      "Content-Type",
       "Date",
       "X-Api-Version",
     ],
   })
 );
-
 // Body parsers
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -62,7 +46,7 @@ app.use(express.json());
 // Routes
 //app.all("*", loggedIn); // ??????????????????
 app.use("/", require("./controllers/pages"));
-app.use("/auth", loggedIn, require("./controllers/auth"));
+app.use("/auth", require("./controllers/auth"));
 
 client.connect((err) => {
   if (err) {
