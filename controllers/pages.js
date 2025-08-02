@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const { dbService } = require("../config/db-config");
-const loggedIn = require("./loggedIn");
 const checkUserCookie = require("../middleware/auth");
 const checkAdminRole = require("../middleware/admin");
 

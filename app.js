@@ -6,7 +6,6 @@ const { client } = require("./config/db-config");
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT;
-const loggedIn = require("./controllers/loggedIn");
 const helmet = require("helmet");
 
 app.set("trust proxy", true); 
@@ -44,7 +43,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // Routes
-//app.all("*", loggedIn); // ??????????????????
 app.use("/", require("./controllers/pages"));
 app.use("/auth", require("./controllers/auth"));
 
