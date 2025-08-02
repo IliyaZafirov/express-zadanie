@@ -7,6 +7,7 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT;
 const loggedIn = require("./controllers/loggedIn");
+const helmet = require("helmet");
 
 app.set("trust proxy", true); //
 
@@ -15,8 +16,44 @@ const cookie = require("cookie-parser");
 app.use(cookie());
 const cors = require("cors");
 
+app.use(helmet.frameguard({ action: "deny" }));
+app.use(helmet.noSniff());
+
 // CORS middleware
-// ...
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        "https://next-zadanie.vercel.app",
+        // "http://localhost:3000",
+      ];
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.error(`CORS blocked for origin: ${origin}`);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    credentials: true,
+    //secure: true,
+
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-CSRF-Token",
+      "X-Requested-With",
+      "Accept",
+      "Accept-Version",
+      "Content-Length",
+      "Content-MD5",
+      "Content-Type",
+      "Date",
+      "X-Api-Version",
+    ],
+  })
+);
 
 // Body parsers
 app.use(express.urlencoded({ extended: false }));
