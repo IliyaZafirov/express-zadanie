@@ -50,7 +50,7 @@ router.get(
       const users = await dbS.getAllUsers();
       res.json({ success: true, data: users });
     } catch (err) {
-      console.error(err);
+      console.log(err);
       res.status(500).json({ success: false, message: "Server error" });
     }
   }
@@ -64,15 +64,49 @@ router.get(
     try {
       const dbS = dbService.getDbServiceInstance();
       const controls = await dbS.getAllControls();
+
+      console.log(controls);
       res.json({ success: true, data: controls });
     } catch (err) {
-      console.error(err);
+      console.log(err);
       res.status(500).json({ success: false, message: "Server error" });
     }
   }
 );
 
+router.get(
+  "/admin/controls/:id",
+  checkUserCookie,
+  checkAdminRole,
+  async (req, res) => {
+    const { id } = req.params;
+    console.log(id, "control id");
+    try {
+      const dbS = dbService.getDbServiceInstance();
 
+      const control = await dbS.getControlById(id);
+      if (!control) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Control not found" });
+      }
+
+      const usersWithAccess = await dbS.getUsersWithControlAccess(id);
+
+      const allUsers = await dbS.getAllUsers();
+
+      res.json({
+        success: true,
+        control,
+        usersWithAccess,
+        allUsers,
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  }
+);
 
 router.post(
   "/admin/create",
@@ -97,7 +131,7 @@ router.post(
 
       res.json({ success: true });
     } catch (err) {
-      console.error(err);
+      console.log(err);
       res.status(500).json({ success: false, message: "Server error" });
     }
   }
@@ -145,7 +179,7 @@ router.put(
       await dbS.updateUser(id, { role, password, active, controls });
       res.json({ success: true });
     } catch (err) {
-      console.error(err);
+      console.log(err);
       res.status(500).json({ success: false, message: "Server error" });
     }
   }
@@ -162,7 +196,7 @@ router.get(
       const user = await dbS.getUserWithControls(id);
       res.json({ success: true, user });
     } catch (err) {
-      console.error(err);
+      console.log(err);
       res.status(500).json({ success: false, message: "Server error" });
     }
   }
@@ -178,7 +212,7 @@ router.get(
       const events = await dbS.getAllEvents();
       res.json({ success: true, data: events });
     } catch (err) {
-      console.error(err);
+      console.log(err);
       res.status(500).json({ success: false, message: "Server error" });
     }
   }
@@ -194,7 +228,7 @@ router.get(
       const regions = await dbS.getAllRegions();
       res.json({ success: true, data: regions });
     } catch (err) {
-      console.error(err);
+      console.log(err);
       res.status(500).json({ success: false, message: "Server error" });
     }
   }
@@ -210,7 +244,7 @@ router.get(
       const sections = await dbS.getAllSections();
       res.json({ success: true, data: sections });
     } catch (err) {
-      console.error(err);
+      console.log(err);
       res.status(500).json({ success: false, message: "Server error" });
     }
   }

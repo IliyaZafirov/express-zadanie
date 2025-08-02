@@ -58,5 +58,5 @@ client.connect((err) => {
 try {
   app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 } catch (error) {
-  console.error(`Starting the server error: ${error}`);
+  console.log(`Starting the server error: ${error}`);
 }

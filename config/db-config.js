@@ -104,6 +104,39 @@ class dbService {
     }
   }
 
+  async getControlById(id) {
+    try {
+      const result = await queryUtil(`
+        SELECT c.id AS control_id, c.name AS control_name, 
+               s.id AS section_id, s.name AS section_name,
+               r.id AS region_id, r.name AS region_name
+        FROM controls c
+        JOIN sections s ON c.section_id = s.id
+        JOIN regions r ON s.region_id = r.id
+        WHERE c.id = $1
+      `, [id]);
+      return result.rows[0] || null;
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
+  }
+  
+  async getUsersWithControlAccess(controlId) {
+    try {
+      const result = await queryUtil(`
+        SELECT u.id, u.username, u.email, u.role
+        FROM user_controls uc
+        JOIN users u ON uc.user_id = u.id
+        WHERE uc.control_id = $1
+      `, [controlId]);
+      return result.rows;
+    } catch (err) {
+      console.log(err);
+      return [];
+    }
+  }
+
   async createRegion(name) {
     try {
       await queryUtil(`INSERT INTO regions (name) VALUES ($1)`, [name.trim()]);
@@ -228,7 +261,7 @@ class dbService {
       user.controls = controlsRes.rows.map((row) => row.control_id);
       return user;
     } catch (err) {
-      console.error(err);
+      console.log(err);
       throw err;
     }
   }
@@ -249,7 +282,7 @@ class dbService {
       `);
       return result.rows;
     } catch (err) {
-      console.error(err);
+      console.log(err);
       return [];
     }
   }
