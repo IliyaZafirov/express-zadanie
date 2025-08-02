@@ -38,7 +38,7 @@ const login = async (req, res) => {
       expires: new Date(
         Date.now() + process.env.COOKIE_EXPIRES * 24 * 60 * 60 * 1000
       ),
-      httpOnly: true,
+      // httpOnly: true, // Dangerous! Only for test purposes. httpOnly as comment to use js-cookie on front end for nav btns, but now is xss vulnerable
       secure: true,
       sameSite: "None",
       // domain: ".zadanie.com",
