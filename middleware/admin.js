@@ -1,5 +1,5 @@
 function checkAdminRole(req, res, next) {
-  console.log(`decoded user ${req.user}`);
+  console.log(`decoded user ${JSON.stringify(req.user)}`);
   if (req.user.role === "admin" || req.user.role === "power_admin") {
     return next();
   }
