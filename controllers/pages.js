@@ -80,29 +80,51 @@ router.get(
   checkAdminRole,
   async (req, res) => {
     const { id } = req.params;
-    console.log(id, "control id");
     try {
       const dbS = dbService.getDbServiceInstance();
 
       const control = await dbS.getControlById(id);
-      if (!control) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Control not found" });
-      }
-
-      const usersWithAccess = await dbS.getUsersWithControlAccess(id);
-
       const allUsers = await dbS.getAllUsers();
+      const usersWithAccess = await dbS.getUsersByControl(id);
 
       res.json({
         success: true,
         control,
-        usersWithAccess,
         allUsers,
+        usersWithAccess,
       });
     } catch (err) {
-      console.log(err);
+      console.error(err);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  }
+);
+
+router.put(
+  "/admin/controls/:id",
+  checkUserCookie,
+  checkAdminRole,
+  async (req, res) => {
+    const { id } = req.params; // control_id
+    const { users } = req.body; // масив от user_id
+
+    if (!Array.isArray(users)) {
+      return res.status(400).json({ success: false, message: "Invalid data" });
+    }
+
+    try {
+      const dbS = dbService.getDbServiceInstance();
+      const ok = await dbS.updateControlUsers(id, users);
+
+      if (!ok) {
+        return res
+          .status(500)
+          .json({ success: false, message: "Database update failed" });
+      }
+
+      res.json({ success: true });
+    } catch (err) {
+      console.error(err);
       res.status(500).json({ success: false, message: "Server error" });
     }
   }

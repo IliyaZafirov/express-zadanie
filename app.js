@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT;
 const helmet = require("helmet");
 
-app.set("trust proxy", true); 
+app.set("trust proxy", true);
 
 // Middleware
 const cookie = require("cookie-parser");
@@ -22,7 +22,7 @@ app.use(helmet.noSniff());
 app.use(
   cors({
     origin: "https://next-zadanie.vercel.app",
-   // origin: "http://localhost:3000",
+    // origin: "http://localhost:3000",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: [

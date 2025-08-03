@@ -105,31 +105,61 @@ class dbService {
   }
 
   async getControlById(id) {
+    const result = await queryUtil(
+      `SELECT c.id AS control_id, c.name AS control_name, 
+              s.name AS section_name, r.name AS region_name
+       FROM controls c
+       JOIN sections s ON c.section_id = s.id
+       JOIN regions r ON s.region_id = r.id
+       WHERE c.id = $1`,
+      [id]
+    );
+    return result.rows[0] || null;
+  }
+
+  async getUsersByControl(controlId) {
+    const result = await queryUtil(
+      `SELECT u.id, u.username, u.email
+       FROM user_controls uc
+       JOIN users u ON uc.user_id = u.id
+       WHERE uc.control_id = $1`,
+      [controlId]
+    );
+    return result.rows;
+  }
+
+  async updateControlUsers(controlId, userIds) {
     try {
-      const result = await queryUtil(`
-        SELECT c.id AS control_id, c.name AS control_name, 
-               s.id AS section_id, s.name AS section_name,
-               r.id AS region_id, r.name AS region_name
-        FROM controls c
-        JOIN sections s ON c.section_id = s.id
-        JOIN regions r ON s.region_id = r.id
-        WHERE c.id = $1
-      `, [id]);
-      return result.rows[0] || null;
+      await queryUtil(`DELETE FROM user_controls WHERE control_id = $1`, [
+        controlId,
+      ]);
+  
+      for (let userId of userIds) {
+        await queryUtil(
+          `INSERT INTO user_controls (user_id, control_id) VALUES ($1, $2)`,
+          [userId, controlId]
+        );
+      }
+  
+      return true;
     } catch (err) {
-      console.log(err);
-      return null;
+      console.error(err);
+      return false;
     }
   }
   
+
   async getUsersWithControlAccess(controlId) {
     try {
-      const result = await queryUtil(`
+      const result = await queryUtil(
+        `
         SELECT u.id, u.username, u.email, u.role
         FROM user_controls uc
         JOIN users u ON uc.user_id = u.id
         WHERE uc.control_id = $1
-      `, [controlId]);
+      `,
+        [controlId]
+      );
       return result.rows;
     } catch (err) {
       console.log(err);
