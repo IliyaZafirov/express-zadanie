@@ -372,6 +372,26 @@ class dbService {
       return [];
     }
   }
+
+  async getLogout(userId, ip) {
+    try {
+      await queryUtil(
+        `
+        INSERT INTO events (user_id, type, details)
+        VALUES ($1, 'logout', $2);
+        `,
+        [
+          userId,
+          JSON.stringify({
+            logout_at: new Date().toISOString(),
+            ip: ip,
+          }),
+        ]
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  }
 }
 
 module.exports = { client, dbService };

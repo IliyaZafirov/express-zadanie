@@ -327,9 +327,22 @@ router.get("/auth/check", checkUserCookie, (req, res) => {
   res.json({ loggedIn: true, user: req.user });
 });
 
-router.get("/logout", (req, res) => {
-  res.clearCookie("userRegistered");
-  res.redirect("/");
+router.get("/logout", checkUserCookie, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const ip = req.ip;
+
+    console.log(userId);
+
+    const dbS = dbService.getDbServiceInstance();
+    const result = await dbS.getLogout(userId, ip);
+
+    res.clearCookie("userRegistered");
+    res.redirect("/");
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
 });
 
 module.exports = router;
