@@ -113,7 +113,29 @@ router.post(
       const userId = req.user.id;
       const dbS = dbService.getDbServiceInstance();
 
-      const data = await dbS.postAdminChangeEvent(userId, {
+      const data = await dbS.postAdminChangeUserEvent(userId, {
+        changed_at: new Date().toISOString(),
+        ip: req.ip,
+      });
+
+      res.json({ success: true });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ success: false });
+    }
+  }
+);
+
+router.post(
+  "/admin/change-control-event",
+  checkUserCookie,
+  checkAdminRole,
+  async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const dbS = dbService.getDbServiceInstance();
+
+      const data = await dbS.postAdminChangeControlEvent(userId, {
         changed_at: new Date().toISOString(),
         ip: req.ip,
       });
