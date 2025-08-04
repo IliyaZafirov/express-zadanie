@@ -64,6 +64,48 @@ class dbService {
     }
   }
 
+  async postAdminChangeEvent(userId, details = {}) {
+    try {
+      await queryUtil(
+        `
+        INSERT INTO events (user_id, type, details)
+        VALUES ($1, 'admin_change', $2);
+        `,
+        [userId, JSON.stringify(details)]
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async postAdminCreateEvent(userId, details = {}) {
+    try {
+      await queryUtil(
+        `
+        INSERT INTO events (user_id, type, details)
+        VALUES ($1, 'admin_create', $2);
+        `,
+        [userId, JSON.stringify(details)]
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async postAdminViewEventsList(userId, details = {}) {
+    try {
+      await queryUtil(
+        `
+        INSERT INTO events (user_id, type, details)
+        VALUES ($1, 'admin_view_events_list', $2);
+        `,
+        [userId, JSON.stringify(details)]
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   async getAllUsers() {
     try {
       const response = await queryUtil(`
@@ -329,6 +371,28 @@ class dbService {
       LIMIT 200;
     `);
     return result.rows;
+  }
+
+  async getAdministrativeEvents() {
+    try {
+      const result = await queryUtil(`
+        SELECT
+          e.id,
+          u.username,
+          e.type,
+          e.details,
+          e.created_at
+        FROM events e
+        LEFT JOIN users u ON e.user_id = u.id
+        WHERE e.type IN ('admin_change', 'admin_create', 'admin_view_events_list')
+        ORDER BY e.created_at DESC
+        LIMIT 200;
+      `);
+      return result.rows;
+    } catch (err) {
+      console.log(err);
+      return [];
+    }
   }
 
   async getAllControlsEvents() {

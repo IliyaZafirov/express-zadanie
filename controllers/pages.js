@@ -65,6 +65,23 @@ router.get(
   }
 );
 
+router.get(
+  "/admin/administrative-events",
+  checkUserCookie,
+  checkAdminRole,
+  async (req, res) => {
+    try {
+      const dbS = dbService.getDbServiceInstance();
+      const events = await dbS.getAdministrativeEvents();
+
+      res.json({ success: true, data: events });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  }
+);
+
 router.post("/control-click", checkUserCookie, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -80,13 +97,78 @@ router.post("/control-click", checkUserCookie, async (req, res) => {
 
     const dbS = dbService.getDbServiceInstance();
     const result = await dbS.postControlClickEvent(userId, control_id, details);
-    console.log(result);
 
     return res.json({ success: true, event_id: result });
   } catch (err) {
     return res.status(500).json({ success: false, message: "server error" });
   }
 });
+
+router.post(
+  "/admin/change-event",
+  checkUserCookie,
+  checkAdminRole,
+  async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const dbS = dbService.getDbServiceInstance();
+
+      const data = await dbS.postAdminChangeEvent(userId, {
+        changed_at: new Date().toISOString(),
+        ip: req.ip,
+      });
+
+      res.json({ success: true });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ success: false });
+    }
+  }
+);
+
+router.post(
+  "/admin/create-event",
+  checkUserCookie,
+  checkAdminRole,
+  async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const dbS = dbService.getDbServiceInstance();
+
+      await dbS.postAdminCreateEvent(userId, {
+        created_at: new Date().toISOString(),
+        ip: req.ip,
+      });
+
+      res.json({ success: true });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ success: false });
+    }
+  }
+);
+
+router.post(
+  "/admin/view-events-list-event",
+  checkUserCookie,
+  checkAdminRole,
+  async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const dbS = dbService.getDbServiceInstance();
+
+      await dbS.postAdminViewEventsList(userId, {
+        viewed_at: new Date().toISOString(),
+        ip: req.ip,
+      });
+
+      res.json({ success: true });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ success: false });
+    }
+  }
+);
 
 router.get(
   "/admin/controls-events",
