@@ -69,7 +69,7 @@ class dbService {
       await queryUtil(
         `
         INSERT INTO events (user_id, type, details)
-        VALUES ($1, 'admin_change', $2);
+        VALUES ($1, 'admin_user_change', $2);
         `,
         [userId, JSON.stringify(details)]
       );
@@ -384,7 +384,7 @@ class dbService {
           e.created_at
         FROM events e
         LEFT JOIN users u ON e.user_id = u.id
-        WHERE e.type IN ('admin_change', 'admin_create', 'admin_view_events_list')
+        WHERE e.type IN ('admin_user_change', 'admin_create', 'admin_view_events_list')
         ORDER BY e.created_at DESC
         LIMIT 200;
       `);

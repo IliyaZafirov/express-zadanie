@@ -105,7 +105,7 @@ router.post("/control-click", checkUserCookie, async (req, res) => {
 });
 
 router.post(
-  "/admin/change-event",
+  "/admin/change-user-event",
   checkUserCookie,
   checkAdminRole,
   async (req, res) => {
