@@ -327,4 +327,9 @@ router.get("/auth/check", checkUserCookie, (req, res) => {
   res.json({ loggedIn: true, user: req.user });
 });
 
+router.get("/logout", (req, res) => {
+  res.clearCookie("userRegistered");
+  res.redirect("/");
+});
+
 module.exports = router;
