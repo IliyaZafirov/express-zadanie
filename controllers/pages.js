@@ -17,6 +17,54 @@ router.get("/my-controls", checkUserCookie, async (req, res) => {
   }
 });
 
+router.get(
+  "/admin/registration-events",
+  checkUserCookie,
+  checkAdminRole,
+  async (req, res) => {
+    try {
+      const dbS = dbService.getDbServiceInstance();
+      const events = await dbS.getAllRegistrationEvents();
+      res.json({ success: true, data: events });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  }
+);
+
+router.get(
+  "/admin/change-pass-events",
+  checkUserCookie,
+  checkAdminRole,
+  async (req, res) => {
+    try {
+      const dbS = dbService.getDbServiceInstance();
+      const events = await dbS.getAllChangePasswordEvents();
+      res.json({ success: true, data: events });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  }
+);
+
+router.get(
+  "/admin/in-out-events",
+  checkUserCookie,
+  checkAdminRole,
+  async (req, res) => {
+    try {
+      const dbS = dbService.getDbServiceInstance();
+      const events = await dbS.getAllLoginLogoutEvents();
+      res.json({ success: true, data: events });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  }
+);
+
 router.post("/control-click", checkUserCookie, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -39,6 +87,24 @@ router.post("/control-click", checkUserCookie, async (req, res) => {
     return res.status(500).json({ success: false, message: "server error" });
   }
 });
+
+router.get(
+  "/admin/controls-events",
+  checkUserCookie,
+  checkAdminRole,
+  async (req, res) => {
+    try {
+      const dbS = dbService.getDbServiceInstance();
+      const events = await dbS.getAllControlsEvents();
+
+      console.log(events);
+      res.json({ success: true, data: events });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  }
+);
 
 router.get(
   "/admin/users",
@@ -94,7 +160,7 @@ router.get(
         usersWithAccess,
       });
     } catch (err) {
-      console.error(err);
+      console.log(err);
       res.status(500).json({ success: false, message: "Server error" });
     }
   }
@@ -124,7 +190,7 @@ router.put(
 
       res.json({ success: true });
     } catch (err) {
-      console.error(err);
+      console.log(err);
       res.status(500).json({ success: false, message: "Server error" });
     }
   }
@@ -217,22 +283,6 @@ router.get(
       const dbS = dbService.getDbServiceInstance();
       const user = await dbS.getUserWithControls(id);
       res.json({ success: true, user });
-    } catch (err) {
-      console.log(err);
-      res.status(500).json({ success: false, message: "Server error" });
-    }
-  }
-);
-
-router.get(
-  "/admin/events",
-  checkUserCookie,
-  checkAdminRole,
-  async (req, res) => {
-    try {
-      const dbS = dbService.getDbServiceInstance();
-      const events = await dbS.getAllEvents();
-      res.json({ success: true, data: events });
     } catch (err) {
       console.log(err);
       res.status(500).json({ success: false, message: "Server error" });

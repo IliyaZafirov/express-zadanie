@@ -133,21 +133,20 @@ class dbService {
       await queryUtil(`DELETE FROM user_controls WHERE control_id = $1`, [
         controlId,
       ]);
-  
+
       for (let userId of userIds) {
         await queryUtil(
           `INSERT INTO user_controls (user_id, control_id) VALUES ($1, $2)`,
           [userId, controlId]
         );
       }
-  
+
       return true;
     } catch (err) {
-      console.error(err);
+      console.log(err);
       return false;
     }
   }
-  
 
   async getUsersWithControlAccess(controlId) {
     try {
@@ -296,7 +295,64 @@ class dbService {
     }
   }
 
-  async getAllEvents() {
+  async getAllRegistrationEvents() {
+    const result = await queryUtil(`
+      SELECT e.id, u.username, e.type, e.details, e.created_at
+      FROM events e
+      LEFT JOIN users u ON e.user_id = u.id
+      WHERE e.type = 'registration'
+      ORDER BY e.created_at DESC
+      LIMIT 200;
+    `);
+    return result.rows;
+  }
+
+  async getAllChangePasswordEvents() {
+    const result = await queryUtil(`
+      SELECT e.id, u.username, e.type, e.details, e.created_at
+      FROM events e
+      LEFT JOIN users u ON e.user_id = u.id
+      WHERE e.type = 'change_password'
+      ORDER BY e.created_at DESC
+      LIMIT 200;
+    `);
+    return result.rows;
+  }
+
+  async getAllLoginLogoutEvents() {
+    const result = await queryUtil(`
+      SELECT e.id, u.username, e.type, e.details, e.created_at
+      FROM events e
+      LEFT JOIN users u ON e.user_id = u.id
+      WHERE e.type IN ('login', 'logout')
+      ORDER BY e.created_at DESC
+      LIMIT 200;
+    `);
+    return result.rows;
+  }
+
+  async getAllControlsEvents() {
+    try {
+      const result = await queryUtil(`
+        SELECT
+          e.id,
+          u.username,
+          e.type,
+          e.details,
+          e.created_at
+        FROM events e
+        LEFT JOIN users u ON e.user_id = u.id
+        ORDER BY e.created_at DESC
+        LIMIT 200;
+      `);
+      return result.rows;
+    } catch (err) {
+      console.log(err);
+      return [];
+    }
+  }
+
+  async getAllChangeEvents() {
     try {
       const result = await queryUtil(`
         SELECT

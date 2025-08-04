@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 
 const login = async (req, res) => {
   const { username, password } = req.body;
-  console.log(req.body);
+
   if (!username || !password) {
     return res.json({
       success: false,
@@ -15,7 +15,6 @@ const login = async (req, res) => {
   try {
     const query = "SELECT * FROM users WHERE username = $1";
     const values = [username];
-
     const result = await client.query(query, values);
 
     if (
@@ -28,8 +27,10 @@ const login = async (req, res) => {
       });
     }
 
+    const userId = result.rows[0].id;
+
     const token = jwt.sign(
-      { id: result.rows[0].id, role: result.rows[0].role },
+      { id: userId, role: result.rows[0].role },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES }
     );
@@ -43,11 +44,25 @@ const login = async (req, res) => {
       sameSite: "None",
       // domain: ".zadanie.com",
     };
-
     res.cookie("userRegistered", token, cookieOptions);
+
+    await client.query(
+      `
+      INSERT INTO events (user_id, type, details)
+      VALUES ($1, 'login', $2);
+      `,
+      [
+        userId,
+        JSON.stringify({
+          login_at: new Date().toISOString(),
+          ip: req.ip,
+        }),
+      ]
+    );
+
     return res.json({ success: true, case: "loggedIn" });
   } catch (err) {
-    console.log(`Error in login function ${err}`);
+    console.log(err);
     return res.json({
       success: false,
       case: "error",
