@@ -342,6 +342,7 @@ class dbService {
           e.created_at
         FROM events e
         LEFT JOIN users u ON e.user_id = u.id
+        WHERE e.type = 'control_press'
         ORDER BY e.created_at DESC
         LIMIT 200;
       `);
