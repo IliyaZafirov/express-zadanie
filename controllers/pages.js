@@ -201,7 +201,6 @@ router.get(
       const dbS = dbService.getDbServiceInstance();
       const events = await dbS.getAllControlsEvents();
 
-      console.log(events);
       res.json({ success: true, data: events });
     } catch (err) {
       console.log(err);
@@ -235,7 +234,6 @@ router.get(
       const dbS = dbService.getDbServiceInstance();
       const controls = await dbS.getAllControls();
 
-      console.log(controls);
       res.json({ success: true, data: controls });
     } catch (err) {
       console.log(err);
@@ -435,8 +433,6 @@ router.get("/logout", checkUserCookie, async (req, res) => {
   try {
     const userId = req.user.id;
     const ip = req.ip;
-
-    console.log(userId);
 
     const dbS = dbService.getDbServiceInstance();
     const result = await dbS.getLogout(userId, ip);

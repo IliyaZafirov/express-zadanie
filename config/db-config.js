@@ -358,7 +358,7 @@ class dbService {
       LEFT JOIN users u ON e.user_id = u.id
       WHERE e.type = 'registration'
       ORDER BY e.created_at DESC
-      LIMIT 200;
+      LIMIT 300;
     `);
     return result.rows;
   }
@@ -370,7 +370,7 @@ class dbService {
       LEFT JOIN users u ON e.user_id = u.id
       WHERE e.type = 'change_password'
       ORDER BY e.created_at DESC
-      LIMIT 200;
+      LIMIT 300;
     `);
     return result.rows;
   }
@@ -382,7 +382,7 @@ class dbService {
       LEFT JOIN users u ON e.user_id = u.id
       WHERE e.type IN ('login', 'logout')
       ORDER BY e.created_at DESC
-      LIMIT 200;
+      LIMIT 300;
     `);
     return result.rows;
   }
@@ -400,7 +400,7 @@ class dbService {
         LEFT JOIN users u ON e.user_id = u.id
         WHERE e.type IN ('admin_user_change', 'admin_control_change', 'admin_create', 'admin_view_events_list')
         ORDER BY e.created_at DESC
-        LIMIT 200;
+        LIMIT 300;
       `);
       return result.rows;
     } catch (err) {
@@ -422,7 +422,7 @@ class dbService {
         LEFT JOIN users u ON e.user_id = u.id
         WHERE e.type = 'control_press'
         ORDER BY e.created_at DESC
-        LIMIT 200;
+        LIMIT 300;
       `);
       return result.rows;
     } catch (err) {
@@ -443,7 +443,7 @@ class dbService {
         FROM events e
         LEFT JOIN users u ON e.user_id = u.id
         ORDER BY e.created_at DESC
-        LIMIT 200;
+        LIMIT 300;
       `);
       return result.rows;
     } catch (err) {
